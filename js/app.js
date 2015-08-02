@@ -8,8 +8,7 @@
 
 // Margins are defined as per mbostock's Margin Convention, see
 // http://bl.ocks.org/mbostock/3019563
-var margin = { top: 10, right: 10, bottom: 30, left: 10},
-
+var margin = { top: 30, right: 30, bottom: 30, left: 30},
 
 //  The values here don't really matter because a) the original data values
 //  are mapped via d3.scale to this box, and b) the SVG will be scaled
@@ -80,7 +79,18 @@ var xAxis = d3.svg.axis()
               .orient("bottom")
               .ticks(22);
 
+var yAxis = d3.svg.axis()
+              .scale(yScale)
+              .orient("left");
+
+console.log(margin.left);
+console.log(barWidth()/2);
 svg.append('g')
    .attr('class', 'axis')
-   .attr('transform', 'translate(' + margin.left + ',' + (height + margin.top) + ')')
+   .attr('transform', 'translate(' + (margin.left + xScale(yearAsDate(monthlyMeans[0].Year)) + barWidth()/2) + ',' + (height + margin.top) + ')')
    .call(xAxis);
+
+svg.append('g')
+   .attr('class', 'axis')
+   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+   .call(yAxis);
