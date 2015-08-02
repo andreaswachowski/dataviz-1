@@ -25,12 +25,12 @@ var margin = { top: 30, right: 30, bottom: 30, left: 30},
         // Because we only have the year, we arbitrarily choose the middle of the year.
         return timeFormat.parse(yearNumber+'-07-01');
     },
-    xScale = d3.time.scale()
+    x = d3.time.scale()
                     .domain(d3.extent(monthlyMeans.map(function(d) {
                         return yearAsDate(d.Year);
                     })))
                     .range([0, width]),
-    yScale = d3.scale.linear()
+    y = d3.scale.linear()
                      .domain(d3.extent(monthlyMeans.map(function(d) {
                          return d.MAM;
                      })))
@@ -62,26 +62,26 @@ svg.append('g')
    .style({'fill': '#3c763d', 'stroke': '#3c763d', 'stroke-width': '0'})
     .attr('width', barWidth())
     .attr('height', function (d) {
-        return Math.abs(yScale(d.MAM)-yScale(0));
+        return Math.abs(y(d.MAM)-y(0));
     })
     .attr('x', function (d) {
-        return xScale(yearAsDate(d.Year));
+        return x(yearAsDate(d.Year));
     })
     .attr('y', function (d) {
         // This is almost as shown on http://stackoverflow.com/questions/10127402/bar-chart-with-negative-values
         // except that we have to use Math.max instead of Math.min due to
-        // the inverted yScale.
-        return yScale(Math.max(0,d.MAM));
+        // the inverted y.
+        return y(Math.max(0,d.MAM));
     });
 
 // Add axes
 var xAxis = d3.svg.axis()
-              .scale(xScale)
+              .scale(x)
               .orient("bottom")
               .ticks(22);
 
 var yAxis = d3.svg.axis()
-              .scale(yScale)
+              .scale(y)
               .orient("left");
 
 svg.append('g')
