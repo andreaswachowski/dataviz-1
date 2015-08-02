@@ -3,5 +3,7 @@ body {
   margin: 0 auto;
 }
 
-#bar-chart {
+#bar-chart svg {
+  width: 100%;
+  height: 100%;
 }

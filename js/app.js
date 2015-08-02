@@ -7,41 +7,38 @@ var chartdata = monthlyMeans.map(function(entry) {
     return entry.MAM;
 });
 
-console.log(chartdata);
-
-//  The size of the chart is determined by the size of the surrounding
-//  container (which can easily be adapted using CSS).
-var height = '100%',
-    width = '100%',
-//  The width of each bar and the offset between each bar, in the units of
-//  the processed data. In other words, these settings determine the
-//  overall proportions. For example, using a barWidth of "20" will render
-//  data with a value of "20" as a square.
-    barWidth = 10,
-    barOffset = 5;
-
-var maxNegativeValue =  Math.min.apply(null,chartdata);
-var maxPositiveValue =  Math.max.apply(null,chartdata);
-console.log(maxNegativeValue);
-console.log(maxPositiveValue);
-var maxHeight = maxPositiveValue - maxNegativeValue;
-console.log(maxHeight);
+//  The values here don't really matter because a) the original data values
+//  are mapped via d3.scale to this box, and b) the SVG will be scaled
+//  to 100% in it's surrounding <div>. Hence the size displayed on the screen
+//  depends entirely on the size of the surrounding <div>.
+var height = '300',
+    width = '1000',
+    svgViewBox = '0 0 ' + width + ' ' + height +'',
+    xScale = d3.scale.ordinal()
+                     .domain(d3.range(chartdata.length))
+                     .rangeRoundBands([0, width], 0.2),
+    yScale = d3.scale.linear()
+                     .domain(d3.extent(chartdata))
+                     .range([height,0]) // reverse orientation because SVG's origin is at the top, not bottom left
+                     .nice();
 
 d3.select('#bar-chart').append('svg')
    // Calculate width and height dynamically, based on the supplied data.
-  .attr('viewBox', '0 0 ' + (barWidth+barOffset)*chartdata.length + ' ' + maxHeight)
-  .attr('preserveAspectRatio', 'xMinYMin meet')
+  .attr('viewBox', svgViewBox)
   .style('background', '#fff')
   .selectAll('rect').data(chartdata)
   .enter().append('rect')
     .style({'fill': '#3c763d', 'stroke': '#3c763d', 'stroke-width': '0'})
-    .attr('width', barWidth)
+    .attr('width', xScale.rangeBand())
     .attr('height', function (data) {
-        return Math.abs(data);
+        return Math.abs(yScale(data)-yScale(0));
     })
     .attr('x', function (data, i) {
-        return i * (barWidth + barOffset);
+        return xScale(i);
     })
     .attr('y', function (data) {
-        return data > 0 ? maxPositiveValue-data : maxPositiveValue;
+        // This is almost as shown on http://stackoverflow.com/questions/10127402/bar-chart-with-negative-values
+        // except that we have to use Math.max instead of Math.min due to
+        // the inverted yScale.
+        return yScale(Math.max(0,data));
     });
