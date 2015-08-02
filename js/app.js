@@ -8,7 +8,7 @@
 
 // Margins are defined as per mbostock's Margin Convention, see
 // http://bl.ocks.org/mbostock/3019563
-var margin = { top: 20, right: 10, bottom: 20, left: 10},
+var margin = { top: 10, right: 10, bottom: 30, left: 10},
 
 
 //  The values here don't really matter because a) the original data values
@@ -19,12 +19,18 @@ var margin = { top: 20, right: 10, bottom: 20, left: 10},
     widthWithMargin = 1000,
     height = 300 - margin.top - margin.bottom,
     width = 1000 - margin.left - margin.right,
-    xScale = d3.scale.linear()
+    // parse the time with d3 instead of creating Date objects for browser
+    // independency, see http://bl.ocks.org/jebeck/9671241
+    timeFormat = d3.time.format("%Y-%m-%d"),
+    yearAsDate = function(yearNumber) {
+        // Because we only have the year, we arbitrarily choose the middle of the year.
+        return timeFormat.parse(yearNumber+'-07-01');
+    },
+    xScale = d3.time.scale()
                     .domain(d3.extent(monthlyMeans.map(function(d) {
-                        return d.Year;
+                        return yearAsDate(d.Year);
                     })))
                     .range([0, width]),
-                    // .rangeRoundBands([0, width], 0.2), // with ordinal scale
     yScale = d3.scale.linear()
                      .domain(d3.extent(monthlyMeans.map(function(d) {
                          return d.MAM;
@@ -40,9 +46,10 @@ var svg = d3.select('#bar-chart')
             .attr('width', widthWithMargin)
             .attr('height', heightWithMargin);
 
+var barPadding=2;
+
 function barWidth() {
-    return 5; // with ordinal scale
-    // return xScale.rangeBand(); // with ordinal scale
+    return width/monthlyMeans.length-barPadding; // with time scale
 }
 
 // Add data
@@ -58,7 +65,7 @@ svg.append('g')
         return Math.abs(yScale(d.MAM)-yScale(0));
     })
     .attr('x', function (d) {
-        return xScale(d.Year);
+        return xScale(yearAsDate(d.Year));
     })
     .attr('y', function (d) {
         // This is almost as shown on http://stackoverflow.com/questions/10127402/bar-chart-with-negative-values
@@ -71,9 +78,9 @@ svg.append('g')
 var xAxis = d3.svg.axis()
               .scale(xScale)
               .orient("bottom")
-              .ticks(20);
+              .ticks(22);
 
 svg.append('g')
    .attr('class', 'axis')
-   .attr('transform', 'translate(0,' + height + ')')
+   .attr('transform', 'translate(' + margin.left + ',' + (height + margin.top) + ')')
    .call(xAxis);
