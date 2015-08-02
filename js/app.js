@@ -43,7 +43,9 @@ var svg = d3.select('#bar-chart')
             // Calculate width and height dynamically, based on the supplied data.
             .attr('viewBox', '0 0 ' + widthWithMargin + ' ' + heightWithMargin +'')
             .attr('width', widthWithMargin)
-            .attr('height', heightWithMargin);
+            .attr('height', heightWithMargin)
+            .append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 var barPadding=2;
 
@@ -53,7 +55,6 @@ function barWidth() {
 
 // Add data
 svg.append('g')
-   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
    .style('background', '#fff')
    .selectAll('rect').data(monthlyMeans, function(d) { return d.Year; } )
    .enter()
@@ -83,14 +84,11 @@ var yAxis = d3.svg.axis()
               .scale(yScale)
               .orient("left");
 
-console.log(margin.left);
-console.log(barWidth()/2);
 svg.append('g')
    .attr('class', 'axis')
-   .attr('transform', 'translate(' + (margin.left + xScale(yearAsDate(monthlyMeans[0].Year)) + barWidth()/2) + ',' + (height + margin.top) + ')')
+   .attr('transform', 'translate(0,' + height + ')')
    .call(xAxis);
 
 svg.append('g')
    .attr('class', 'axis')
-   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
    .call(yAxis);
