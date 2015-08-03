@@ -8,7 +8,7 @@
 
 // Margins are defined as per mbostock's Margin Convention, see
 // http://bl.ocks.org/mbostock/3019563
-var margin = { top: 30, right: 30, bottom: 30, left: 30},
+var margin = { top: 10, right: 30, bottom: 50, left: 50},
 
 //  The values here don't really matter because a) the original data values
 //  are mapped via d3.scale to this box, and b) the SVG will be scaled
@@ -53,7 +53,8 @@ function barWidth() {
     return width/monthlyMeans.length-barPadding; // with time scale
 }
 
-// Add data
+// Add bar chart
+/*
 svg.append('g')
    .style('background', '#fff')
    .selectAll('rect').data(monthlyMeans, function(d) { return d.Year; } )
@@ -73,6 +74,39 @@ svg.append('g')
         // the inverted y.
         return y(Math.max(0,d.MAM));
     });
+*/
+
+var mam_line = d3.svg.line()
+    .x(function (d,i) {
+        return x(yearAsDate(d.Year));
+    })
+    .y(function(d) {
+        return y(d.MAM);
+    });
+
+var jja_line = d3.svg.line()
+    .x(function (d,i) {
+        return x(yearAsDate(d.Year));
+    })
+    .y(function(d) {
+        return y(d.JJA);
+    });
+
+var djf_line = d3.svg.line()
+    .x(function (d,i) {
+        return x(yearAsDate(d.Year));
+    })
+    .y(function(d) {
+        return y(d.DJF);
+    });
+
+var son_line = d3.svg.line()
+    .x(function (d,i) {
+        return x(yearAsDate(d.Year));
+    })
+    .y(function(d) {
+        return y(d.SON);
+    });
 
 // Add axes
 var xAxis = d3.svg.axis()
@@ -82,13 +116,54 @@ var xAxis = d3.svg.axis()
 
 var yAxis = d3.svg.axis()
               .scale(y)
+              .tickSize(-width) // draw horizontal guide lines
               .orient("left");
 
 svg.append('g')
-   .attr('class', 'axis')
+   .attr('class', 'x axis')
    .attr('transform', 'translate(0,' + height + ')')
    .call(xAxis);
 
+// x-axis label
 svg.append('g')
-   .attr('class', 'axis')
+   .attr("class", 'axis')
+   .selectAll('rect').data(monthlyMeans)
+   .enter()
+   .append("text")
+   .attr("x", width/2)
+   .attr("y", height+36)
+   .text("Year");
+
+svg.append('g')
+   .attr('class', 'y axis')
    .call(yAxis);
+
+// y-axis label
+svg.append('g')
+   .attr("class", 'axis')
+   .selectAll('rect').data(monthlyMeans)
+   .enter()
+   .append("text")
+   .style('text-anchor', 'middle')
+   .attr("y", -30)
+   .attr("x", -height/2)
+   .attr('transform', 'rotate(-90)')
+   .text("1/100 degree Celsius");
+
+svg.append("svg:path")
+   .attr('class', 'mma')
+   .attr("d", mam_line(monthlyMeans));
+
+/*
+svg.append("svg:path")
+   .attr('class', 'jja')
+   .attr("d", jja_line(monthlyMeans));
+
+svg.append("svg:path")
+   .attr('class', 'djf')
+   .attr("d", djf_line(monthlyMeans));
+
+svg.append("svg:path")
+   .attr('class', 'son')
+   .attr("d", son_line(monthlyMeans));
+*/

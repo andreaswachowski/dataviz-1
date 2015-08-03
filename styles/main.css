@@ -8,14 +8,42 @@ body {
   height: 100%;
 }
 
-.axis path,
-.axis line {
+path {
+  stroke: steelblue;
+  stroke-width: 1;
+  fill: none;
+}
+
+.mma {
+  stroke: steelblue;
+}
+
+
+.jja {
+  stroke: red;
+}
+
+.djf {
+  stroke: green;
+}
+
+.son {
+  stroke: yellow;
+}
+
+.axis {
   fill: none;
   stroke: black;
   shape-rendering: crispEdges;
 }
 
+.y.axis line {
+  stroke: lightgrey;
+}
+
 .axis text {
+  fill: black;
   font-family: sans-serif;
+  stroke: none;
   font-size: 11px;
 }
