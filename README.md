@@ -4,3 +4,4 @@ A small visualization created with [D3.js](http://d3js.org/) for an assignment d
 
 Clone the repo and open `index.html` in your browser. The result should look similar to this:
 
+<img src="https://github.com/andreaswachowski/dataviz-1/blob/master/screenshot.png" height=auto width="100%">
