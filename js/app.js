@@ -14,10 +14,10 @@ var margin = { top: 10, right: 30, bottom: 50, left: 50},
 //  are mapped via d3.scale to this box, and b) the SVG will be scaled
 //  to 100% in it's surrounding <div>. Hence the size displayed on the screen
 //  depends entirely on the size of the surrounding <div>.
-    heightWithMargin = 300,
+    heightWithMargin = 400,
     widthWithMargin = 1000,
-    height = 300 - margin.top - margin.bottom,
-    width = 1000 - margin.left - margin.right,
+    height = heightWithMargin - margin.top - margin.bottom,
+    width = widthWithMargin - margin.left - margin.right,
     // parse the time with d3 instead of creating Date objects for browser
     // independency, see http://bl.ocks.org/jebeck/9671241
     timeFormat = d3.time.format("%Y-%m-%d"),
@@ -127,7 +127,7 @@ svg.append('g')
 // x-axis label
 svg.append('g')
    .attr("class", 'axis')
-   .selectAll('rect').data(monthlyMeans)
+   .selectAll('rect').data([0])
    .enter()
    .append("text")
    .attr("x", width/2)
@@ -141,11 +141,22 @@ svg.append('g')
 // y-axis label
 svg.append('g')
    .attr("class", 'axis')
-   .selectAll('rect').data(monthlyMeans)
+   .selectAll('rect').data([0])
    .enter()
    .append("text")
    .style('text-anchor', 'middle')
-   .attr("y", -30)
+   .attr("y", -40)
+   .attr("x", -height/2)
+   .attr('transform', 'rotate(-90)')
+   .text("deviation from mean");
+
+svg.append('g')
+   .attr("class", 'axis')
+   .selectAll('rect').data([0])
+   .enter()
+   .append("text")
+   .style('text-anchor', 'middle')
+   .attr("y", -25)
    .attr("x", -height/2)
    .attr('transform', 'rotate(-90)')
    .text("1/100 degree Celsius");
